@@ -195,7 +195,7 @@ canvas#game{ position:fixed; top:0; left:0; image-rendering:pixelated; image-ren
     <div class="t-foot">One reward only per person. <span class="ar">جائزة واحدة فقط لكل شخص.</span></div>
     <div class="t-btns">
       <button class="btn" id="btnRetryCode" hidden>Retry <span class="ar">جرّب</span></button>
-      <button class="btn" id="btnDemo" hidden>Play again (preview only)</button>
+      <button class="btn" id="btnDemo" hidden>Play again <span class="ar">العب مرة ثانية</span></button>
     </div>
   </div>
 </div>
@@ -282,7 +282,7 @@ const P={y:0, vy:0, onGround:true, duck:false, inv:0, hurtT:0, anim:0, jumpBuf:0
 const G=1500, JV=540;
 let parts=[], pops=[];
 let te=0, endX=0, endY=0, pose='run', flags={}, fries=[], cone=null, sizzleOn=false;
-let claim=null, claimErr=false, claimBusy=false;
+let claim=null, claimErr=false, claimBusy=false, replayWin=false;
 const duckPtrs=new Set(); let keyDuck=false;
 const duckHeld=()=>duckPtrs.size>0||keyDuck;
 
@@ -691,7 +691,8 @@ function setCtl(on){ $('ctl').classList.toggle('show',on); $('hud').classList.to
 
 function startGame(){
   ac(); dist=0; lastCP=0; lives=3; camX=-PX; Object.assign(P,{y:0,vy:0,onGround:true,duck:false,inv:0.6,hurtT:0,anim:0,jumpBuf:0});
-  for(const o of OBS) o.hit=false; parts=[]; pops=[]; te=0; flags={}; fries=[]; sizzleOn=false; claim=null; claimErr=false;
+  for(const o of OBS) o.hit=false; parts=[]; pops=[]; te=0; flags={}; fries=[]; sizzleOn=false; claimErr=false; replayWin=false;
+  const saved=ls.get(CLAIM_KEY); if(saved&&saved.code) claim=saved;
   state='run'; hideScreens(); setCtl(true); updHUD();
 }
 
@@ -716,8 +717,10 @@ function makeClaim(n,demo){
   return {n, num, code:'PS-'+p(d.getDate())+p(d.getMonth()+1)+String(d.getFullYear()).slice(2)+'-'+num, at:d.toISOString(), demo:!!demo};
 }
 function requestClaim(){
+  const saved=claim||ls.get(CLAIM_KEY);
+  if(saved&&saved.code){ claim=saved; replayWin=true; renderTicket(true); return; }
   if(claimBusy) return; claimBusy=true; claimErr=false; renderTicket();
-  fetchNumber().then(r=>{ claim=makeClaim(r.n,r.demo); if(!r.demo) ls.set(CLAIM_KEY,claim); })
+  fetchNumber().then(r=>{ claim=makeClaim(r.n,r.demo); ls.set(CLAIM_KEY,claim); })
     .catch(()=>{ claimErr=true; })
     .finally(()=>{ claimBusy=false; renderTicket(); });
 }
@@ -730,9 +733,10 @@ function renderTicket(already){
     const d=new Date(claim.at);
     $('rDate').textContent=d.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'})+', '+d.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit',hour12:true});
     $('rCode').textContent=claim.code;
-    if(claim.demo){ st.innerHTML='Preview mode: this number is for testing only.'; $('btnDemo').hidden=false; }
-    else if(already){ st.innerHTML='This device already won. Here is your reward.<span class="ar">هالجهاز فاز من قبل، هذي جائزتك.</span>'; }
+    $('btnDemo').hidden=false;
+    if(already){ st.innerHTML='Same winning number as your first win.<span class="ar">نفس رقم فوزك الأول.</span>'; }
     else st.innerHTML='';
+    if(claim.demo) st.innerHTML+='<span style="display:block;font-size:12px;opacity:.7;margin-top:4px">Preview mode: test number.</span>';
   } else if(claimErr){
     tk.classList.add('pending'); $('rNum').textContent='#···'; $('rDate').textContent=''; $('rCode').textContent='';
     st.innerHTML="Couldn't get your number. Check your internet and tap Retry.<span class=\"ar\">ما قدرنا نطلع رقمك. تأكد من النت واضغط جرّب.</span>";
@@ -742,7 +746,7 @@ function renderTicket(already){
     st.innerHTML='Getting your number…<span class="ar">لحظة، نطلع رقمك…</span>';
   }
 }
-function showReward(already){ renderTicket(already); showScreen('reward'); $('hud').classList.remove('show'); }
+function showReward(already){ renderTicket(already||replayWin); showScreen('reward'); $('hud').classList.remove('show'); }
 
 /* ================== INPUT ================== */
 const touch=$('touch');
