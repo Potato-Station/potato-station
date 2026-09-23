@@ -7,7 +7,7 @@
 <title>Potato Run | Potato Station</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Lalezar&family=Pixelify+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Lalezar&family=Luckiest+Guy&family=Pixelify+Sans:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
 :root{
   --yellow:#F5C800; --cream:#FFF6D6; --red:#7A1712; --ketchup:#B3261E; --black:#000; --sky:#FF9E2C;
@@ -64,7 +64,7 @@ canvas#game{ position:fixed; top:0; left:0; image-rendering:pixelated; image-ren
 .card h1{ font:700 clamp(40px,12vw,58px)/.92 var(--en); margin:4px 0 0; letter-spacing:-.01em; }
 .card h2{ font-size:30px; line-height:1.2; margin:2px 0 10px; color:var(--red); }
 .card p{ margin:6px 0; font-size:17px; line-height:1.35; }
-.card .lead{ margin:12px 0 16px; }
+.card .lead{ margin:10px 0 6px; }
 .card p.ar{ font-size:18px; line-height:1.5; }
 .card .by{ font-size:14px; margin:0; }
 .how{ margin:12px 0 14px; display:grid; grid-template-columns:1fr 1fr; gap:8px; }
@@ -90,7 +90,9 @@ canvas#game{ position:fixed; top:0; left:0; image-rendering:pixelated; image-ren
 .t-head .en{ font-size:17px; font-weight:700; }
 .t-head .ar{ font-size:20px; line-height:1.4; }
 .deal{ padding:10px 12px 4px; }
-.deal .big{ font:700 54px/.95 var(--en); color:var(--red); }
+.deal .big{ display:flex; align-items:baseline; justify-content:center; gap:10px; line-height:1; }
+.deal .pct{ font:400 76px/1 'Luckiest Guy', 'Arial Black', Impact, sans-serif; color:var(--yellow); -webkit-text-stroke:3px #000; paint-order:stroke fill; text-shadow:4px 4px 0 var(--red); letter-spacing:.02em; }
+.deal .off{ font:400 40px/1 'Luckiest Guy', 'Arial Black', Impact, sans-serif; color:#000; }
 .deal .en{ font-size:17px; }
 .deal .ar{ font-size:22px; line-height:1.4; }
 .num{ margin:6px 14px 0; display:flex; align-items:center; justify-content:space-between; background:var(--yellow); border:3px solid #000; padding:6px 12px; }
@@ -115,7 +117,7 @@ canvas#game{ position:fixed; top:0; left:0; image-rendering:pixelated; image-ren
   .card h1{ font-size:40px; } .card h2{ font-size:24px; margin-bottom:4px; }
   .card p{ font-size:14px; } .card p.ar{ font-size:16px; }
   .how{ margin:8px 0 10px; }
-  .deal .big{ font-size:40px; } #rNum{ font-size:34px; }
+  .deal .pct{ font-size:56px; } .deal .off{ font-size:30px; } #rNum{ font-size:34px; }
   #start .logo{ width:150px; } .t-logo{ padding:8px 8px 4px; } .t-logo .logo{ width:110px; }
   .t-head .en{ font-size:15px; } .t-head .ar{ font-size:17px; }
   .note .ar{ font-size:16px; }
@@ -146,8 +148,11 @@ canvas#game{ position:fixed; top:0; left:0; image-rendering:pixelated; image-ren
       <p>Jump, duck, reach the fryer and win 15% off your next meal.</p>
       <p class="ar">اقفز وانزل واوصل للقلاية واربح خصم ١٥٪ لوجبتك القادمة</p>
     </div>
+    <div class="how">
+      <div><span class="k">⬇</span>Hold the left side to duck<span class="ar">اضغط يسار مطوّل عشان تنزل</span></div>
+      <div><span class="k">⬆</span>Tap the right side to jump<span class="ar">دق يمين عشان تنط</span></div>
+    </div>
     <button class="btn" id="btnStart">Start <span class="ar">يلا</span></button>
-    <span class="fine">One reward only per person. <span class="ar">جائزة واحدة فقط لكل شخص.</span></span>
   </div>
 </div>
 
@@ -170,7 +175,7 @@ canvas#game{ position:fixed; top:0; left:0; image-rendering:pixelated; image-ren
       <div class="ar" id="rHeadAr">وصلت! رسمياً صرت فرايز 🍟</div>
     </div>
     <div class="deal">
-      <div class="big">15% OFF</div>
+      <div class="big"><span class="pct">15%</span><span class="off">OFF</span></div>
       <div class="en">your next meal</div>
       <div class="ar">خصم ١٥٪ لوجبتك القادمة</div>
     </div>
